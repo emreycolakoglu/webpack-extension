@@ -1,0 +1,30 @@
+{
+  "manifest_version": 2,
+  "version": "0.0.1",
+  "name": "Extension",
+  "description": "description",
+  "icons": {
+    "64": "assets/icon.png"
+  },
+  "permissions": ["*://*.google.com/*", "activeTab", "webNavigation"],
+  "background": {
+    "scripts": ["browser_polyfill.js", "background_script.js"]
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*.google.com/*"],
+      "js": ["browser_polyfill.js", "content_script.js"]
+    }
+  ],
+  "browser_action": {
+    "default_icon": {
+      "64": "assets/icon.png"
+    },
+    "default_popup": "browser_action.html",
+    "default_title": "Extension"
+  },
+  "options_ui": {
+    "page": "options.html"
+  },
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
+}
