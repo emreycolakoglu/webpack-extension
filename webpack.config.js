@@ -18,10 +18,10 @@ const fileExtensions = [
   "svg",
   "ttf",
   "woff",
-  "woff2"
+  "woff2",
 ];
 
-module.exports = env => {
+module.exports = (env) => {
   const options = {
     mode: env || "development",
     entry: {
@@ -38,16 +38,16 @@ module.exports = env => {
         "options_script.js"
       ),
       background_script: path.join(__dirname, "src", "background_script.js"),
-      content_script: path.join(__dirname, "src", "content_script.js")
+      content_script: path.join(__dirname, "src", "content_script.js"),
     },
     output: {
-      path: path.join(__dirname, "dist")
+      path: path.join(__dirname, "dist"),
     },
     resolve: {
       alias: alias,
       extensions: fileExtensions
-        .map(extension => "." + extension)
-        .concat([".jsx", ".js", ".css"])
+        .map((extension) => "." + extension)
+        .concat([".jsx", ".js", ".css"]),
     },
     optimization: {
       minimize: true,
@@ -56,28 +56,28 @@ module.exports = env => {
           terserOptions: {
             warnings: false,
             compress: {
-              comparisons: false
+              comparisons: false,
             },
             parse: {},
             mangle: true,
             output: {
               comments: false,
               /* eslint-disable camelcase */
-              ascii_only: true
+              ascii_only: true,
               /* eslint-enable camelcase */
-            }
+            },
           },
           parallel: true,
-          cache: true
-        })
-      ]
+          cache: true,
+        }),
+      ],
     },
     module: {
       rules: [
         {
           test: /\.css$/,
           loader: "style-loader!css-loader",
-          exclude: /node_modules/
+          exclude: /node_modules/,
         },
         {
           test: new RegExp(".(" + fileExtensions.join("|") + ")$"),
@@ -85,42 +85,44 @@ module.exports = env => {
           exclude: /node_modules/,
           query: {
             outputPath: "./assets/",
-            name: "[name].[ext]"
-          }
+            name: "[name].[ext]",
+          },
         },
         {
           test: /\.html$/,
           loader: "html-loader",
-          exclude: /node_modules/
+          exclude: /node_modules/,
         },
         {
           test: /\.(js|jsx)$/,
           loader: "babel-loader",
-          exclude: /node_modules/
-        }
-      ]
+          exclude: /node_modules/,
+        },
+      ],
     },
     plugins: [
       //new CleanWebpackPlugin(),
-      new CopyPlugin([
-        {
-          from: "src/manifest.json",
-          transform: function(content, path) {
-            // generates the manifest file using the package.json informations
-            return Buffer.from(
-              JSON.stringify({
-                description: process.env.npm_package_description,
-                version: process.env.npm_package_version,
-                ...JSON.parse(content.toString())
-              })
-            );
-          }
-        },
-        {
-          from: "src/browser_polyfill.js",
-          to: ""
-        }
-      ]),
+      new CopyPlugin({
+        patterns: [
+          {
+            from: "src/manifest.json",
+            transform: function (content, path) {
+              // generates the manifest file using the package.json informations
+              return Buffer.from(
+                JSON.stringify({
+                  description: process.env.npm_package_description,
+                  version: process.env.npm_package_version,
+                  ...JSON.parse(content.toString()),
+                })
+              );
+            },
+          },
+          {
+            from: "src/browser_polyfill.js",
+            to: "",
+          },
+        ],
+      }),
       new HtmlWebPackPlugin({
         template: path.join(
           __dirname,
@@ -129,15 +131,15 @@ module.exports = env => {
           "browser_action.html"
         ),
         filename: "browser_action.html",
-        chunks: ["browser_action"]
+        chunks: ["browser_action"],
       }),
       new HtmlWebPackPlugin({
         template: path.join(__dirname, "src", "options", "options.html"),
         filename: "options.html",
-        chunks: ["options_script"]
+        chunks: ["options_script"],
       }),
-      new WriteFilePlugin()
-    ]
+      new WriteFilePlugin(),
+    ],
   };
 
   if (env === "development") {
